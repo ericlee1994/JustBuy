@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="商品名称"
+        android:id="@+id/et_thing_name"
+        android:text="商品1"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="商品数量"
+        android:id="@+id/et_thing_num"
+        android:inputType="number"
+        android:text="1"
+        />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="未含税价格"
+        android:id="@+id/et_thing_unitPrice"
+        android:inputType="number|numberDecimal"
+        android:text="9.96"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="当地汇率"
+        android:id="@+id/et_thing_localRate"
+        android:inputType="number|numberDecimal"
+        android:text="0.62"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="折算货币"
+        android:id="@+id/et_thing_convertPrice"
+        android:inputType="number|numberDecimal"
+        android:text="13.2"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="添加"
+        android:id="@+id/btn_add_thing"/>
+</LinearLayout>
