@@ -1,6 +1,8 @@
 package com.android.eric.justbuy.adpater;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,6 +63,7 @@ public class ThingsAdapter extends BaseAdapter {
 
         Thing thing = things.get(position);
         viewHolder.tv_thing_name.setText(thing.getName());
+        viewHolder.img_thing.setImageBitmap(byteToBitmap(thing.getImage()));
         viewHolder.tv_thing_num.setText(String.valueOf(thing.getNumber()));
         viewHolder.tv_thing_unitPrice.setText(String.valueOf(thing.getUnitPrice()));
         viewHolder.tv_thing_localRate.setText(String.valueOf(thing.getLocalRate()));
@@ -89,5 +92,9 @@ public class ThingsAdapter extends BaseAdapter {
     private String formatNumber(float number) {
         NumberFormat numberFormat = new DecimalFormat("##.##");
         return numberFormat.format(number);
+    }
+
+    private Bitmap byteToBitmap(byte[] bytes) {
+        return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
     }
 }

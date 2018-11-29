@@ -2,29 +2,39 @@ package com.android.eric.justbuy.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.android.eric.justbuy.R;
 import com.android.eric.justbuy.model.Thing;
 import com.android.eric.justbuy.sql.ThingSQL;
 
+import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 
 
 public class AddThingActivity extends AppCompatActivity {
     private static final String TAG = "AddThingActivity";
+    private static final int REQUEST_CODE_PHOTO = 0x001;
 
-    public EditText et_thing_name;
-    public EditText et_thing_num;
-    public EditText et_thing_unitPrice;
-    public EditText et_thing_localRate;
-    public EditText et_thing_convertPrice;
-    public Button btn_add_thing;
+    private EditText et_thing_name;
+    private EditText et_thing_num;
+    private EditText et_thing_unitPrice;
+    private EditText et_thing_localRate;
+    private EditText et_thing_convertPrice;
+    private Button btn_add_thing;
+    private Button btn_take_photo;
+    private ImageView imageView;
+
+    private Bitmap photo;
 
     private Context context;
 
@@ -40,8 +50,11 @@ public class AddThingActivity extends AppCompatActivity {
         et_thing_localRate = findViewById(R.id.et_thing_localRate);
         et_thing_convertPrice = findViewById(R.id.et_thing_convertPrice);
         btn_add_thing = findViewById(R.id.btn_add_thing);
+        btn_take_photo = findViewById(R.id.btn_take_photo);
+        imageView = findViewById(R.id.img_thing);
 
         btn_add_thing.setOnClickListener(onClickListener);
+        btn_take_photo.setOnClickListener(onClickListener);
     }
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -51,6 +64,7 @@ public class AddThingActivity extends AppCompatActivity {
                 case R.id.btn_add_thing:
                     Thing thing = new Thing();
                     thing.setName(et_thing_name.getText().toString());
+                    thing.setImage(bitmapToByte(photo));
                     thing.setNumber(Integer.parseInt(et_thing_num.getText().toString()));
                     thing.setUnitPrice(Float.parseFloat(et_thing_unitPrice.getText().toString()));
                     thing.setLocalRate(Float.parseFloat(et_thing_localRate.getText().toString()));
@@ -63,6 +77,12 @@ public class AddThingActivity extends AppCompatActivity {
 
                     finish();
                     break;
+                case R.id.btn_take_photo:
+
+                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(cameraIntent, REQUEST_CODE_PHOTO);
+
+                    break;
                 default:
                     break;
             }
@@ -70,10 +90,25 @@ public class AddThingActivity extends AppCompatActivity {
     };
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == REQUEST_CODE_PHOTO){
+            if (resultCode == RESULT_OK) {
+                photo = data.getParcelableExtra("data");
+                imageView.setImageBitmap(photo);
+            }
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         Log.i(TAG, "onDestroy: ");
         super.onDestroy();
     }
 
+    public byte[] bitmapToByte(Bitmap bitmap) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        return stream.toByteArray();
+    }
 
 }
