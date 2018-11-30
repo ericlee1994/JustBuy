@@ -7,11 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.eric.justbuy.R;
 import com.android.eric.justbuy.model.Thing;
+import com.android.eric.justbuy.sql.ThingSQL;
 
 
 import java.text.DecimalFormat;
@@ -22,8 +24,10 @@ public class ThingsAdapter extends BaseAdapter {
 
     private ArrayList<Thing> things;
     private LayoutInflater layoutInflater;
+    private Context context;
 
     public ThingsAdapter(Context context, ArrayList<Thing> things) {
+        this.context = context;
         this.things = things;
         layoutInflater = LayoutInflater.from(context);
     }
@@ -55,19 +59,35 @@ public class ThingsAdapter extends BaseAdapter {
             viewHolder.tv_thing_unitPrice = convertView.findViewById(R.id.tv_thing_unitPrice);
             viewHolder.tv_thing_localRate = convertView.findViewById(R.id.tv_thing_localRate);
             viewHolder.tv_thing_totalPrice = convertView.findViewById(R.id.tv_thing_totalPrice);
+            viewHolder.btn_delete_thing = convertView.findViewById(R.id.btn_delete_thing);
 
             convertView.setTag(viewHolder);
         }else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        Thing thing = things.get(position);
+        final Thing thing = things.get(position);
         viewHolder.tv_thing_name.setText(thing.getName());
-        viewHolder.img_thing.setImageBitmap(byteToBitmap(thing.getImage()));
+        if (thing.getImage() != null) {
+            viewHolder.img_thing.setImageBitmap(byteToBitmap(thing.getImage()));
+        }
         viewHolder.tv_thing_num.setText(String.valueOf(thing.getNumber()));
         viewHolder.tv_thing_unitPrice.setText(String.valueOf(thing.getUnitPrice()));
         viewHolder.tv_thing_localRate.setText(String.valueOf(thing.getLocalRate()));
         viewHolder.tv_thing_totalPrice.setText(formatNumber(calculateTotal(thing.getUnitPrice(), thing.getNumber(), thing.getLocalRate())));
+
+        viewHolder.btn_delete_thing.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ThingSQL.getInstance(context).delete(thing);
+                for (int i = 0; i < things.size(); i++) {
+                    if (things.get(i).getName().equals(thing.getName())){
+                        things.remove(i);
+                    }
+                }
+                notifyDataSetChanged();
+            }
+        });
 
         return convertView;
     }
@@ -79,6 +99,7 @@ public class ThingsAdapter extends BaseAdapter {
         TextView tv_thing_unitPrice;
         TextView tv_thing_localRate;
         TextView tv_thing_totalPrice;
+        Button btn_delete_thing;
     }
 
     private float calculateTotal(float unitPrice, int num, float localRate) {

@@ -42,7 +42,8 @@ public class ThingSQL {
     }
 
     public void delete(Thing thing) {
-        sqLiteDatabase.execSQL("delete from " + Common.TABLE_NAME + " where thing_name = " + thing.getName() + " and purchase_time = " + thing.getPurchaseTime());
+        sqLiteDatabase.execSQL("delete from " + Common.TABLE_NAME + " where thing_name = " + "\"" + thing.getName() + "\"");
+//  sqLiteDatabase.execSQL("delete from " + Common.TABLE_NAME + " where thing_name = " + thing.getName() + " and purchase_time = " + thing.getPurchaseTime());
     }
 
     public List<Thing> queryAll() {
